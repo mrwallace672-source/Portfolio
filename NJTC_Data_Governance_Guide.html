@@ -1,0 +1,1904 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NJTC Data Governance Guide | Pearl to Operations</title>
+    <style>
+        :root {
+            --njtc-primary: #005CA9;
+            --njtc-secondary: #00A7E1;
+            --njtc-accent: #FDB913;
+            --njtc-dark: #003D6B;
+            --njtc-light: #E8F4F8;
+            --njtc-green: #6AB547;
+            --njtc-orange: #F47920;
+            --njtc-gray: #6D6E71;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, var(--njtc-light) 0%, #fff 100%);
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--njtc-primary) 0%, var(--njtc-dark) 100%);
+            color: white;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .logo-placeholder {
+            background: white;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-weight: bold;
+            color: var(--njtc-primary);
+            font-size: 1.2rem;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            position: sticky;
+            top: 0;
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            z-index: 100;
+        }
+
+        .tab-button {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            background: var(--njtc-light);
+            color: var(--njtc-dark);
+            cursor: pointer;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+        }
+
+        .tab-button:hover {
+            background: var(--njtc-secondary);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        .tab-button.active {
+            background: var(--njtc-primary);
+            color: white;
+            box-shadow: 0 4px 12px rgba(0,92,169,0.3);
+        }
+
+        .content-section {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            border-left: 4px solid var(--njtc-accent);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+            transform: translateY(-4px);
+        }
+
+        .card h2 {
+            color: var(--njtc-primary);
+            margin-bottom: 1rem;
+            font-size: 1.8rem;
+            border-bottom: 2px solid var(--njtc-light);
+            padding-bottom: 0.5rem;
+        }
+
+        .card h3 {
+            color: var(--njtc-dark);
+            margin: 1.5rem 0 0.75rem 0;
+            font-size: 1.3rem;
+        }
+
+        .workflow-diagram {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .workflow-step {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: var(--njtc-light);
+            border-radius: 8px;
+            border-left: 4px solid var(--njtc-secondary);
+        }
+
+        .step-number {
+            background: var(--njtc-primary);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .step-content h4 {
+            color: var(--njtc-dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .data-points {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .data-point {
+            background: linear-gradient(135deg, var(--njtc-secondary) 0%, var(--njtc-primary) 100%);
+            color: white;
+            padding: 1rem;
+            border-radius: 8px;
+            font-weight: 500;
+        }
+
+        .data-point strong {
+            display: block;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            border-left: 4px solid;
+        }
+
+        .alert-info {
+            background: #e3f2fd;
+            border-color: var(--njtc-secondary);
+            color: var(--njtc-dark);
+        }
+
+        .alert-warning {
+            background: #fff3cd;
+            border-color: var(--njtc-accent);
+            color: #856404;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            border-color: var(--njtc-green);
+            color: #155724;
+        }
+
+        ul, ol {
+            margin-left: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        .collapsible {
+            cursor: pointer;
+            padding: 1rem;
+            background: var(--njtc-light);
+            border: none;
+            border-radius: 8px;
+            text-align: left;
+            width: 100%;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--njtc-dark);
+            margin-top: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .collapsible:hover {
+            background: var(--njtc-secondary);
+            color: white;
+        }
+
+        .collapsible.active {
+            background: var(--njtc-primary);
+            color: white;
+        }
+
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            padding: 0 1rem;
+        }
+
+        .collapsible-content.active {
+            max-height: 2000px;
+            padding: 1rem;
+            background: white;
+            border-radius: 0 0 8px 8px;
+        }
+
+        .benchmark {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background: var(--njtc-green);
+            color: white;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin: 0.25rem;
+        }
+
+        .footer {
+            background: var(--njtc-dark);
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            margin-top: 3rem;
+        }
+
+        .metric-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .metric-card {
+            background: white;
+            border: 2px solid var(--njtc-light);
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--njtc-primary);
+            display: block;
+        }
+
+        .metric-label {
+            font-size: 0.9rem;
+            color: var(--njtc-gray);
+            margin-top: 0.5rem;
+        }
+
+        code {
+            background: #f4f4f4;
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            color: var(--njtc-dark);
+        }
+
+        .process-flow {
+            background: var(--njtc-light);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+
+        .arrow {
+            text-align: center;
+            font-size: 2rem;
+            color: var(--njtc-accent);
+            margin: 0.5rem 0;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            .nav-tabs {
+                position: relative;
+            }
+
+            .tab-button {
+                flex: 1 1 auto;
+                min-width: 120px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <div class="logo-area">
+                <svg width="60" height="60" viewBox="0 0 100 100" style="background: white; border-radius: 8px; padding: 8px;">
+                    <text x="50" y="55" font-family="Arial, sans-serif" font-size="36" font-weight="bold" fill="#005CA9" text-anchor="middle">NJTC</text>
+                    <circle cx="50" cy="50" r="45" stroke="#FDB913" stroke-width="3" fill="none"/>
+                </svg>
+                <div>
+                    <div style="font-size: 1rem; font-weight: 600;">New Jersey Tutoring Corps</div>
+                    <div style="font-size: 0.85rem; opacity: 0.9;">Pennsylvania Tutoring Corps</div>
+                </div>
+            </div>
+            <h1>Data Governance Guide</h1>
+            <p class="subtitle">Pearl Database to Operations: Policy, Procedures & Best Practices</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="nav-tabs">
+            <button class="tab-button active" onclick="showTab('overview')">🏠 Overview</button>
+            <button class="tab-button" onclick="showTab('pearl')">📊 Pearl Database</button>
+            <button class="tab-button" onclick="showTab('collection')">📝 Data Collection</button>
+            <button class="tab-button" onclick="showTab('processing')">⚙️ Processing & QA</button>
+            <button class="tab-button" onclick="showTab('dashboards')">📈 Dashboards</button>
+            <button class="tab-button" onclick="showTab('monitoring')">🔍 Monitoring & Flags</button>
+            <button class="tab-button" onclick="showTab('action')">⚡ Operational Action</button>
+            <button class="tab-button" onclick="showTab('governance')">🛡️ Data Governance</button>
+        </div>
+
+        <!-- Overview Section -->
+        <div id="overview" class="content-section active">
+            <div class="card">
+                <h2>Welcome to the NJTC Data Governance Guide</h2>
+                <p>This comprehensive guide documents our complete data workflow from collection through Pearl to operational action. Our system transforms <strong>static reporting into proactive management</strong>.</p>
+                
+                <div class="metric-grid">
+                    <div class="metric-card">
+                        <span class="metric-value">20%</span>
+                        <span class="metric-label">High Incomplete Threshold</span>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-value">80%</span>
+                        <span class="metric-label">Survey Completion Target</span>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-value">90%</span>
+                        <span class="metric-label">Tutor Attendance Benchmark</span>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-value">10 min</span>
+                        <span class="metric-label">Scholar Survey "In Range" Window</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>The Complete Workflow</h2>
+                <div class="workflow-diagram">
+                    <div class="workflow-step">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <h4>Data Collection (Pearl)</h4>
+                            <p>Tutors and scholars complete attendance and surveys after each session</p>
+                        </div>
+                    </div>
+                    <div class="workflow-step">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <h4>Data Processing & QA</h4>
+                            <p>Weekly data pulls, cleaning, and validation by PEI team</p>
+                        </div>
+                    </div>
+                    <div class="workflow-step">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <h4>Dashboard Updates</h4>
+                            <p>Internal and external dashboards refreshed with benchmarks applied</p>
+                        </div>
+                    </div>
+                    <div class="workflow-step">
+                        <div class="step-number">4</div>
+                        <div class="step-content">
+                            <h4>Flag Identification</h4>
+                            <p>Automated detection of concerns: attendance, surveys, behavior</p>
+                        </div>
+                    </div>
+                    <div class="workflow-step">
+                        <div class="step-number">5</div>
+                        <div class="step-content">
+                            <h4>Ticket Creation & Tracking</h4>
+                            <p>Issues logged in tracking system with status updates</p>
+                        </div>
+                    </div>
+                    <div class="workflow-step">
+                        <div class="step-number">6</div>
+                        <div class="step-content">
+                            <h4>Program Action</h4>
+                            <p>Regional managers and coordinators intervene based on data</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="alert alert-info">
+                    <strong>🎯 Our Philosophy:</strong> Data drives not just reflection, but proactive decisions across our organization. Evaluation is the strategic connector across departments.
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Key Principles</h2>
+                <ul>
+                    <li><strong>Single Source of Truth:</strong> All data systems are owned and maintained by the Director of Program Evaluation & Impact</li>
+                    <li><strong>Weekly Cadence:</strong> Data is pulled, analyzed, and reported on a consistent weekly schedule</li>
+                    <li><strong>Benchmark-Driven:</strong> Clear thresholds trigger alerts and action items</li>
+                    <li><strong>Cross-Departmental:</strong> Links Pearl, HR, and Program metrics into one analytic engine</li>
+                    <li><strong>Action-Oriented:</strong> Beyond reporting - directs teams where to intervene, when to act, and why</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Pearl Database Section -->
+        <div id="pearl" class="content-section">
+            <div class="card">
+                <h2>Pearl Database Overview</h2>
+                <p>Pearl is our centralized learning management system for session scheduling, attendance tracking, and quality monitoring. It serves as the foundation for all tutoring operations data.</p>
+                
+                <h3>Core Data Collection Points</h3>
+                <div class="data-points">
+                    <div class="data-point">
+                        <strong>Instructor Attendance</strong>
+                        Sessions attended, missed, late, and cancellation tracking
+                    </div>
+                    <div class="data-point">
+                        <strong>Student Attendance</strong>
+                        Scholar participation, absences, and patterns
+                    </div>
+                    <div class="data-point">
+                        <strong>Instructor Surveys</strong>
+                        Post-session quality reports with engagement ratings
+                    </div>
+                    <div class="data-point">
+                        <strong>Student Surveys</strong>
+                        Scholar feedback on learning and enjoyment
+                    </div>
+                    <div class="data-point">
+                        <strong>Session Details</strong>
+                        Scheduled vs. actual times, subjects, grades
+                    </div>
+                    <div class="data-point">
+                        <strong>Attendance Detail</strong>
+                        Join/leave times, late arrivals, missed reasons
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Pearl Report Types</h2>
+                
+                <button class="collapsible">Attendance Summary Reports</button>
+                <div class="collapsible-content">
+                    <h3>Instructor/Student Attendance Summary</h3>
+                    <ul>
+                        <li><strong>User:</strong> Instructor/Student Name</li>
+                        <li><strong>Attended Sessions:</strong> # of sessions marked Attended</li>
+                        <li><strong>Attended Time:</strong> HH:MM:SS of attended sessions</li>
+                        <li><strong>Missed Sessions:</strong> # of sessions marked Missed</li>
+                        <li><strong>Late:</strong> # of sessions marked Late</li>
+                        <li><strong>% Attended:</strong> Attendance percentage calculation</li>
+                        <li><strong>Canceled Sessions:</strong> # of assigned sessions marked Canceled</li>
+                    </ul>
+                    <p><strong>Additional Fields:</strong> Sex, School, Region, District, Custom ID</p>
+                </div>
+
+                <button class="collapsible">Attendance Detail Report</button>
+                <div class="collapsible-content">
+                    <h3>Granular Session-Level Data</h3>
+                    <ul>
+                        <li>User name, email/username, role</li>
+                        <li>Session title/details and status</li>
+                        <li>Planned vs. Actual session start/end times</li>
+                        <li>First join and last leave times</li>
+                        <li>Attendance Status:
+                            <ul>
+                                <li>All (includes all statuses)</li>
+                                <li>Attended (marked present)</li>
+                                <li>Late (marked late)</li>
+                                <li>Missed (did not attend)</li>
+                                <li>Subbed (substituted via QuickSub)</li>
+                                <li>Not Recorded (attendance not marked)</li>
+                            </ul>
+                        </li>
+                        <li>Demographics: Grade, Sex, Race, Ethnicity, School, Region, District</li>
+                    </ul>
+                </div>
+
+                <button class="collapsible">Survey Reports</button>
+                <div class="collapsible-content">
+                    <h3>Instructor Post Session Survey</h3>
+                    <ul>
+                        <li>How engaged was the scholar? (1-5 scale)</li>
+                        <li>How much did you enjoy this session? (1-5 scale)</li>
+                        <li>How much do you think the scholar learned? (1-5 scale)</li>
+                        <li>Overall, how did this tutoring session go? (1-5 scale)</li>
+                        <li>Comments for student (visible to parents)</li>
+                        <li>Admin flag: "Do you need an administrator to look into this session?"</li>
+                        <li>Comments for Admin (private)</li>
+                        <li>Comments for yourself (private notes)</li>
+                    </ul>
+                    <p><strong>Metadata:</strong> Time to complete, session date/length, scheduled vs. actual times, Pearl IDs</p>
+
+                    <h3>Student Post Session Survey</h3>
+                    <ul>
+                        <li>How confident are you that you understood the material? (1-5 scale)</li>
+                        <li>How much did you enjoy this session? (1-5 scale)</li>
+                        <li>How much do you think you learned? (1-5 scale)</li>
+                        <li>Overall, how did this tutoring session go? (1-5 scale)</li>
+                        <li>Comments (optional)</li>
+                    </ul>
+                    <p><strong>Metadata:</strong> Time to complete, session date/length, scheduled vs. actual times, Pearl IDs</p>
+                </div>
+
+                <button class="collapsible">Accessing Pearl Reports</button>
+                <div class="collapsible-content">
+                    <h3>Report Generation Steps</h3>
+                    <ol>
+                        <li>Navigate to "Reports" from the left navigation bar in Pearl</li>
+                        <li>Select report type:
+                            <ul>
+                                <li>Attendance Detail (main attendance report)</li>
+                                <li>Session Details (main session quality report)</li>
+                                <li>Instructor Surveys (session quality check)</li>
+                                <li>Student Surveys (session quality check)</li>
+                                <li>Instructor/Scholar Attendance Summary</li>
+                            </ul>
+                        </li>
+                        <li>Set Date Range: Start of first program (e.g., 09/22/2025) to current date</li>
+                        <li>Ensure ALL FIELDS are included in export</li>
+                        <li>Download CSV for further analysis</li>
+                    </ol>
+
+                    <div class="alert alert-warning">
+                        <strong>⚠️ Data Quality Check:</strong> The district and school information is occasionally absent from reports. Always verify this data is included before updating master report files.
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Pearl FAQs & Documentation</h2>
+                <p>For detailed documentation on Pearl features and functionality, refer to the official Pearl documentation portal:</p>
+                <div class="alert alert-info">
+                    <strong>📚 Pearl Support:</strong> Visit the Pearl help center for tutorials on session management, attendance marking, survey completion, and troubleshooting.
+                </div>
+            </div>
+        </div>
+
+        <!-- Data Collection Section -->
+        <div id="collection" class="content-section">
+            <div class="card">
+                <h2>Data Collection Process</h2>
+                <p>Data collection happens at multiple touchpoints throughout the tutoring lifecycle. This section details who collects what, when, and how.</p>
+
+                <h3>Frequency & Timing</h3>
+                <div class="process-flow">
+                    <strong>Real-Time:</strong> Attendance and surveys collected immediately after each session
+                    <div class="arrow">↓</div>
+                    <strong>Weekly:</strong> Data pulled from Pearl every week for analysis
+                    <div class="arrow">↓</div>
+                    <strong>Monthly:</strong> Trend review and leadership briefing
+                    <div class="arrow">↓</div>
+                    <strong>Quarterly:</strong> Formal progress reporting aligned to diagnostic cycles
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Collection Points by Role</h2>
+
+                <button class="collapsible">Instructor Responsibilities</button>
+                <div class="collapsible-content">
+                    <h3>During Each Session</h3>
+                    <ul>
+                        <li>Mark attendance for all scholars (Attended, Late, Missed)</li>
+                        <li>Complete Instructor Post Session Survey immediately after session ends</li>
+                        <li>Flag any issues requiring admin attention</li>
+                        <li>Guide scholars in completing their post-session surveys</li>
+                    </ul>
+
+                    <h3>Survey Completion Guidelines</h3>
+                    <ul>
+                        <li><strong>When:</strong> Within 24 hours of session completion</li>
+                        <li><strong>Where:</strong> Pearl Dashboard → Sessions → View Session → Enter Survey</li>
+                        <li><strong>Required:</strong> All rating questions (1-5 scale)</li>
+                        <li><strong>Optional but Encouraged:</strong> Comments for context</li>
+                    </ul>
+
+                    <div class="alert alert-warning">
+                        <strong>📌 Critical:</strong> For in-person and alternative URL sessions (Zoom, Google Meet), attendance must be manually marked. Pearl Online Classroom sessions auto-log attendance.
+                    </div>
+                </div>
+
+                <button class="collapsible">Scholar Responsibilities</button>
+                <div class="collapsible-content">
+                    <h3>After Each Session</h3>
+                    <ul>
+                        <li>Complete Student Post Session Survey with instructor guidance</li>
+                        <li>Provide honest feedback on understanding, enjoyment, and learning</li>
+                        <li>Add optional comments if desired</li>
+                    </ul>
+
+                    <h3>Survey Timing</h3>
+                    <p>Surveys should be completed <strong>during the session timeframe</strong> or immediately after. Surveys completed outside the session window are flagged as "out of range."</p>
+
+                    <div class="alert alert-info">
+                        <strong>📊 Current Status:</strong> 35% of scholar surveys are being completed outside the session timeframe, indicating need for reinforcement of real-time completion practices.
+                    </div>
+                </div>
+
+                <button class="collapsible">Site Coordinator Responsibilities</button>
+                <div class="collapsible-content">
+                    <h3>Daily Monitoring</h3>
+                    <ul>
+                        <li>Review incomplete sessions and follow up with instructors</li>
+                        <li>Monitor survey completion rates</li>
+                        <li>Address any red flags raised in instructor surveys</li>
+                        <li>Coordinate substitutions and schedule adjustments</li>
+                    </ul>
+
+                    <h3>Weekly Tasks</h3>
+                    <ul>
+                        <li>Review attendance patterns and identify chronic absenteeism</li>
+                        <li>Communicate with families about attendance concerns</li>
+                        <li>Report service interruptions (testing, school closures, etc.)</li>
+                        <li>Provide programmatic context for data team</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Data Collection Standards</h2>
+
+                <h3>Completeness Requirements</h3>
+                <ul>
+                    <li><strong>Attendance:</strong> Must be marked for 100% of scheduled sessions</li>
+                    <li><strong>Instructor Surveys:</strong> Target 90% completion rate</li>
+                    <li><strong>Scholar Surveys:</strong> Target 80% completion rate</li>
+                    <li><strong>Session Details:</strong> Subject and grade level required for all completed sessions</li>
+                    <li><strong>Location Data:</strong> School/District field required for all rostered staff and scholars</li>
+                </ul>
+
+                <h3>Data Quality Standards</h3>
+                <ul>
+                    <li>Surveys completed within 24 hours of session</li>
+                    <li>Attendance marked accurately (not "Not Recorded")</li>
+                    <li>Comments provided when flagging issues</li>
+                    <li>Service interruptions documented with reason codes</li>
+                </ul>
+
+                <div class="alert alert-success">
+                    <strong>✅ Best Practice:</strong> Set aside the last 5 minutes of each session for scholars to complete surveys on their devices while memories are fresh.
+                </div>
+            </div>
+        </div>
+
+        <!-- Processing & QA Section -->
+        <div id="processing" class="content-section">
+            <div class="card">
+                <h2>Data Processing & Quality Assurance</h2>
+                <p>The Data Team (Program Evaluation & Impact) is responsible for extracting, cleaning, validating, and transforming raw Pearl data into actionable insights.</p>
+
+                <h3>Processing Workflow</h3>
+                <div class="workflow-diagram">
+                    <div class="workflow-step">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <h4>Weekly Data Pull</h4>
+                            <p>Export all required reports from Pearl on consistent schedule</p>
+                        </div>
+                    </div>
+                    <div class="workflow-step">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <h4>Manual Verification</h4>
+                            <p>Cross-reference with SY Database for tutor certification and role status</p>
+                        </div>
+                    </div>
+                    <div class="workflow-step">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <h4>Data Cleaning</h4>
+                            <p>Remove incomplete, scheduled, and not recorded entries per standards</p>
+                        </div>
+                    </div>
+                    <div class="workflow-step">
+                        <div class="step-number">4</div>
+                        <div class="step-content">
+                            <h4>Attendance Calculations</h4>
+                            <p>Filter out service interruptions from scholar attendance averages</p>
+                        </div>
+                    </div>
+                    <div class="workflow-step">
+                        <div class="step-number">5</div>
+                        <div class="step-content">
+                            <h4>Master File Update</h4>
+                            <p>Append to master tracking files and partner-level reports</p>
+                        </div>
+                    </div>
+                    <div class="workflow-step">
+                        <div class="step-number">6</div>
+                        <div class="step-content">
+                            <h4>Dashboard Refresh</h4>
+                            <p>Update all internal and external dashboards with cleaned data</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Data Cleaning Rules</h2>
+
+                <h3>Reporting Requirements for Rostered Staff & Scholars</h3>
+                <div class="alert alert-warning">
+                    <strong>⚠️ Critical Rule:</strong> All rostered staff and scholars must have an associated School/District (location) field for all applicable reports.
+                </div>
+
+                <h3>Session Status Filtering</h3>
+                <p><strong>Partner Level Reporting:</strong> Only completed, attended + late, and missed sessions should be captured. Remove:</p>
+                <ul>
+                    <li>"Scheduled" (future sessions)</li>
+                    <li>"Incomplete" (sessions not finalized)</li>
+                    <li>"Not Recorded" (attendance not marked)</li>
+                </ul>
+
+                <h3>Service Interruption Handling</h3>
+                <p>Exclude service interruptions from overall scholar attendance calculations. Only scholar-centered absence reasons count toward attendance rate:</p>
+                <ul>
+                    <li>✅ <strong>Count:</strong> Absent, Teacher requested to keep scholar in classroom, Refused to come to session</li>
+                    <li>❌ <strong>Exclude:</strong> School testing, diagnostic errors, scheduled school closures, tutor absences</li>
+                </ul>
+
+                <div class="alert alert-info">
+                    <strong>📊 Current Data:</strong>
+                    <ul>
+                        <li>Top service interruption: School testing (29.94%)</li>
+                        <li>Second: Tutor absences (26.29%)</li>
+                        <li>Top scholar miss reason: Absent (40%)</li>
+                        <li>Second: Teacher kept in class (37%)</li>
+                    </ul>
+                </div>
+
+                <h3>Session Metadata Requirements</h3>
+                <p>Every completed session must include:</p>
+                <ul>
+                    <li>Associated Subject (Math, Reading, etc.)</li>
+                    <li>Grade Level</li>
+                    <li>Location (School/District)</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h2>Quality Assurance Checks</h2>
+
+                <button class="collapsible">Incomplete Session Tracking</button>
+                <div class="collapsible-content">
+                    <p>Monitor the number of incomplete sessions per user. Generate alerts if exceeding predefined thresholds compared to all sessions provided.</p>
+                    <p><strong>Current Status:</strong> 77 total incomplete sessions across all instructors</p>
+                    <ul>
+                        <li>🚨 High Incomplete: 6 instructors</li>
+                        <li>⚠️ Monitor: 5 instructors</li>
+                        <li>✅ Within Range: 7 instructors</li>
+                    </ul>
+                </div>
+
+                <button class="collapsible">Instructor Survey Completion</button>
+                <div class="collapsible-content">
+                    <p>Monitor percentage of instructor surveys completed relative to attended sessions.</p>
+                    <p><strong>Threshold:</strong> Instructors completing less than 50% of required surveys are flagged for follow-up.</p>
+                    <p><strong>Example Flags:</strong></p>
+                    <ul>
+                        <li>Michelle Kim: 36 sessions attended, 0 surveys completed → Escalated 10/26/2025</li>
+                        <li>Nicole Cill: 126 sessions, 35 surveys (27.78%)</li>
+                        <li>Vicki Toffler: 24 sessions, 9 surveys (37.5%)</li>
+                    </ul>
+                </div>
+
+                <button class="collapsible">Scholar Survey Ownership</button>
+                <div class="collapsible-content">
+                    <p>Indicates whether a scholar completed their survey within the designated session timeframe or if it has been flagged as "out of range."</p>
+                    <p><strong>"Out of Range" Definition:</strong> Survey completed outside the session timeframe, potentially indicating tutor completion on behalf of scholar.</p>
+                    <p><strong>Current Status:</strong> 35% of scholar surveys submitted out of range across all locations</p>
+                    <p><strong>High Out-of-Range Instructors:</strong></p>
+                    <ul>
+                        <li>Jacob Leebron: 98% out of range</li>
+                        <li>Nicole Cill: 92.4% out of range</li>
+                        <li>Lesley Waszen: 93% out of range</li>
+                    </ul>
+                </div>
+
+                <button class="collapsible">Chronic Absenteeism Detection</button>
+                <div class="collapsible-content">
+                    <p>Flag scholars who miss two consecutive weeks of sessions (10+ consecutive days).</p>
+                    <p><strong>Purpose:</strong> Early intervention for re-engagement</p>
+                    <p><strong>Action:</strong> Site coordinator notified to reach out to family</p>
+                    <p><strong>Example:</strong> Global Leadership Academy flagged for 25% overall scholar attendance with chronic absenteeism concerns</p>
+                </div>
+
+                <button class="collapsible">Comment Flag Review</button>
+                <div class="collapsible-content">
+                    <p>Review flagged comments in Instructor Surveys focusing on:</p>
+                    <ul>
+                        <li>Attendance concerns</li>
+                        <li>Negative scholar experiences</li>
+                        <li>Behavioral issues requiring intervention</li>
+                    </ul>
+                    <p><strong>Current Status (iLearn CMO):</strong></p>
+                    <ul>
+                        <li>Total behavioral comments: 50+</li>
+                        <li>Categories: General (132), Testing/Assessment (39), Academic (1), Positive (4)</li>
+                        <li>18 comments require status update as of 11/17/2025</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Data Governance & Authority</h2>
+
+                <div class="alert alert-warning">
+                    <strong>🛡️ Data Authority:</strong> All data systems, dashboards, and analytics workflows are owned and maintained by the Director of Program Evaluation & Impact. No other staff or team member handles, manipulates, or updates raw or transformed data.
+                </div>
+
+                <h3>Continuity Clause</h3>
+                <p>In the Director's absence:</p>
+                <ul>
+                    <li>Only a static operations report may be issued</li>
+                    <li>No live environment updates or backend changes are permitted</li>
+                    <li>Access permissions remain unchanged</li>
+                </ul>
+
+                <h3>Intellectual Property Protection</h3>
+                <p>All reporting structures, data logic, formulas, governance rules, automation scripts, and dashboard frameworks are proprietary and not to be replicated or distributed.</p>
+            </div>
+        </div>
+
+        <!-- Dashboards Section -->
+        <div id="dashboards" class="content-section">
+            <div class="card">
+                <h2>Dashboard Architecture</h2>
+                <p>NJTC operates a two-tier dashboard system that evolved from static reporting to proactive management.</p>
+
+                <h3>Dashboard Types</h3>
+                <div class="data-points">
+                    <div class="data-point">
+                        <strong>Dark Blue Dashboard</strong>
+                        Program report-out for leadership and partners
+                    </div>
+                    <div class="data-point">
+                        <strong>Special Ops (Dark Mode)</strong>
+                        Deep internal analysis for evaluation team
+                    </div>
+                    <div class="data-point">
+                        <strong>Partner-Facing Dashboards</strong>
+                        External stakeholder views (schools, districts)
+                    </div>
+                    <div class="data-point">
+                        <strong>Internal Analytics</strong>
+                        Tutor and scholar detailed analytics
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Dark Blue Dashboard (Program Report-Out)</h2>
+                <p>Consolidates key program outcomes into one clear view for leadership-ready reporting.</p>
+
+                <h3>Key Metrics Displayed</h3>
+                <ul>
+                    <li><strong>District-Level Attendance:</strong> Overall and by school with tutor attendance heatmaps</li>
+                    <li><strong>Missed Sessions:</strong> Count and breakdown by reason</li>
+                    <li><strong>Session Quality:</strong> 1-5 scale average across all sessions</li>
+                    <li><strong>Tutor-Scholar Engagement:</strong> Tutor perspective on scholar engagement</li>
+                    <li><strong>Scholar Learning Gained:</strong> Scholar self-reported learning</li>
+                    <li><strong>Scholar Enjoyment:</strong> Scholar satisfaction with tutor and session</li>
+                </ul>
+
+                <h3>Visualization Elements</h3>
+                <ul>
+                    <li>Four core bar charts standardized to 1-5 scale</li>
+                    <li>School average attendance rates</li>
+                    <li>Service interruption breakdowns</li>
+                    <li>Tutor session feedback timeline</li>
+                </ul>
+
+                <div class="benchmark">Target: 4.5/5 Session Quality</div>
+                <div class="benchmark">Target: 90% Attendance</div>
+                <div class="benchmark">Target: 80% Survey Completion</div>
+            </div>
+
+            <div class="card">
+                <h2>Special Ops Dashboard (Internal Analysis)</h2>
+                <p>Evaluation's deep-dive tool for automation, prevention, and cross-departmental action.</p>
+
+                <h3>Advanced Features</h3>
+                <button class="collapsible">Benchmark Application</button>
+                <div class="collapsible-content">
+                    <p>Automatic comparison against established thresholds:</p>
+                    <ul>
+                        <li>Tutor Attendance: <span class="benchmark">≥90%</span></li>
+                        <li>Scholar Learning: <span class="benchmark">≥4.2/5</span></li>
+                        <li>Session Quality: <span class="benchmark">≥4.5/5</span></li>
+                        <li>Scholar Enjoyment: <span class="benchmark">≥4.5/5</span></li>
+                        <li>Engagement: <span class="benchmark">≥4.2/5</span></li>
+                    </ul>
+                </div>
+
+                <button class="collapsible">Survey Signal System</button>
+                <div class="collapsible-content">
+                    <p>Converts survey data into traffic light system:</p>
+                    <ul>
+                        <li>🟢 <strong>High:</strong> ≥85% surveys in positive range (4-5)</li>
+                        <li>🟡 <strong>Moderate:</strong> 70-84% positive</li>
+                        <li>🔴 <strong>Low:</strong> <70% positive</li>
+                    </ul>
+                </div>
+
+                <button class="collapsible">Survey Clumping Analysis</button>
+                <div class="collapsible-content">
+                    <p>Tracks distribution over time to detect patterns:</p>
+                    <ul>
+                        <li><strong>Negative (1-2):</strong> Concerning responses requiring follow-up</li>
+                        <li><strong>Neutral (3):</strong> Middle ground, monitor for trends</li>
+                        <li><strong>Positive (4-5):</strong> Desired range indicating success</li>
+                    </ul>
+                    <p>Line charts show daily percentages by day of week to identify patterns (e.g., Monday/Friday dips)</p>
+                </div>
+
+                <button class="collapsible">Comment Categorization</button>
+                <div class="collapsible-content">
+                    <p>Buckets tutor comments for coaching and program feedback:</p>
+                    <ul>
+                        <li><strong>Academic:</strong> Learning challenges, curriculum feedback</li>
+                        <li><strong>Behavior:</strong> Engagement issues, disruptive behavior</li>
+                        <li><strong>Testing/Assessment:</strong> Diagnostic-related comments</li>
+                        <li><strong>General:</strong> Session notes and observations</li>
+                        <li><strong>Positive:</strong> Celebrations and successes</li>
+                    </ul>
+                </div>
+
+                <button class="collapsible">Tutor Performance Flags</button>
+                <div class="collapsible-content">
+                    <p>Identifies tutors falling below benchmarks to support HR and PD decisions:</p>
+                    <ul>
+                        <li>Attendance below 90%</li>
+                        <li>Survey completion below 50%</li>
+                        <li>Session quality ratings consistently below 4.5</li>
+                        <li>Scholar enjoyment consistently below 4.5</li>
+                        <li>High percentage of out-of-range survey submissions</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Partner-Facing Dashboards</h2>
+                <p>Clean, accessible views for external stakeholders including school districts and community partners.</p>
+
+                <h3>Dashboard Components</h3>
+                <ul>
+                    <li><strong>Scholar Attendance Tracking:</strong> Individual and school-level attendance with consecutive missed session trends</li>
+                    <li><strong>Tutor Survey Details:</strong> Aggregate quality metrics by school with positive/neutral/negative breakdowns</li>
+                    <li><strong>Scholar Survey Details:</strong> Student voice on learning, enjoyment, and confidence</li>
+                    <li><strong>Scholar Voice Section:</strong> Highlighted positive comments from students</li>
+                    <li><strong>Quick Data Review:</strong> At-a-glance metrics (total sessions, attended sessions per scholar)</li>
+                </ul>
+
+                <h3>Features for Accessibility</h3>
+                <ul>
+                    <li>School-level filtering for site-specific views</li>
+                    <li>Date range selection for custom reporting periods</li>
+                    <li>Attendance missed reason dropdowns</li>
+                    <li>Monthly calendar highlighting for session density visualization</li>
+                </ul>
+
+                <div class="alert alert-success">
+                    <strong>✅ Design Principle:</strong> Partner dashboards focus on outcomes and celebration, not internal operational flags. Positive framing with actionable insights.
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Internal Analytics Dashboards</h2>
+
+                <h3>Tutor Analytics</h3>
+                <ul>
+                    <li>Individual tutor attendance and survey completion rates</li>
+                    <li>Session quality trends over time with benchmark overlays</li>
+                    <li>Scholar engagement from tutor perspective</li>
+                    <li>Coaching recommendation indicators</li>
+                    <li>Comment flag tracking with resolution status</li>
+                </ul>
+
+                <h3>Scholar Analytics</h3>
+                <ul>
+                    <li>Scholar learning impact metrics (how much learned each session)</li>
+                    <li>Tutor enjoyment (scholar perspective on their tutor)</li>
+                    <li>Attendance patterns and missed session reasons</li>
+                    <li>Service interruption impact on individual scholars</li>
+                    <li>Chronic absenteeism flags</li>
+                </ul>
+
+                <div class="alert alert-info">
+                    <strong>🎯 Use Case:</strong> These dashboards power 1-on-1 coaching conversations, performance reviews, and individualized support plans.
+                </div>
+            </div>
+        </div>
+
+        <!-- Monitoring & Flags Section -->
+        <div id="monitoring" class="content-section">
+            <div class="card">
+                <h2>Monitoring Framework</h2>
+                <p>Our monitoring system uses automated flagging to identify concerns across four main categories:</p>
+
+                <div class="data-points">
+                    <div class="data-point">
+                        <strong>Attendance Concerns</strong>
+                        Tutor absences, scholar chronic absenteeism
+                    </div>
+                    <div class="data-point">
+                        <strong>Survey Compliance</strong>
+                        Incomplete surveys, out-of-range submissions
+                    </div>
+                    <div class="data-point">
+                        <strong>Quality Indicators</strong>
+                        Session ratings, engagement, learning
+                    </div>
+                    <div class="data-point">
+                        <strong>Behavioral Flags</strong>
+                        Comments requiring admin attention
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Flag Types & Thresholds</h2>
+
+                <button class="collapsible">🚨 High Incomplete Sessions (≥20%)</button>
+                <div class="collapsible-content">
+                    <p><strong>Definition:</strong> 20% or more of all sessions assigned to a tutor are marked as incomplete</p>
+                    <p><strong>Calculation:</strong> (Incomplete Sessions / Total Assigned Sessions) × 100</p>
+                    
+                    <h4 style="margin-top: 1rem;">What "Incomplete" Means</h4>
+                    <p>A session is marked incomplete when:</p>
+                    <ul>
+                        <li>Attendance has not been finalized</li>
+                        <li>Session end time was not confirmed</li>
+                        <li>Required post-session actions were not completed</li>
+                    </ul>
+
+                    <h4>Implications</h4>
+                    <ul>
+                        <li>Data gaps prevent accurate attendance tracking and reporting</li>
+                        <li>May indicate technical difficulties accessing Pearl</li>
+                        <li>Could suggest need for additional training on session finalization</li>
+                        <li>Impacts ability to generate complete reports for stakeholders</li>
+                    </ul>
+
+                    <h4>Action Protocol</h4>
+                    <ol>
+                        <li>Site coordinator contacts tutor within 48 hours</li>
+                        <li>Identify root cause: technical issue, training need, or workflow challenge</li>
+                        <li>Provide targeted support based on cause</li>
+                        <li>Monitor weekly for 2-3 weeks to ensure improvement</li>
+                        <li>If unresolved after 3 weeks, escalate to Regional Manager</li>
+                    </ol>
+
+                    <div class="alert alert-warning" style="margin-top: 1rem;">
+                        <strong>📊 Example Scenario:</strong> A tutor with 25 assigned sessions has 6 incomplete sessions. This equals 24% incomplete rate, triggering a high incomplete flag.
+                    </div>
+                </div>
+
+                <button class="collapsible">📝 Instructor Survey Completion Rate (Tiered System)</button>
+                <div class="collapsible-content">
+                    <p><strong>Calculation:</strong> (Instructor Surveys Completed / Attended Sessions) × 100</p>
+                    <p><strong>Purpose:</strong> Identifies instructors who may not consistently complete their on-the-job responsibilities</p>
+                    
+                    <h4 style="margin-top: 1rem;">Tiered Escalation System</h4>
+                    <ul>
+                        <li><strong>🚨 Below 50%:</strong> Immediate escalation and communication with on-site staff
+                            <ul>
+                                <li>Action: Email to program team and direct outreach to tutor</li>
+                                <li>Timeline: Within 24 hours of weekly report</li>
+                                <li>Follow-up: Weekly monitoring until above 50%</li>
+                            </ul>
+                        </li>
+                        <li><strong>⚠️ 50-79%:</strong> Moderate/progressing; requires internal tracking
+                            <ul>
+                                <li>Action: Site coordinator check-in with tutor</li>
+                                <li>Timeline: Within 48 hours of weekly report</li>
+                                <li>Follow-up: Bi-weekly monitoring</li>
+                            </ul>
+                        </li>
+                        <li><strong>✅ 80%+:</strong> In the clear - meeting expectations
+                            <ul>
+                                <li>No action required</li>
+                                <li>Continue routine monitoring</li>
+                            </ul>
+                        </li>
+                    </ul>
+
+                    <p><strong>Example Scenarios:</strong></p>
+                    <ul>
+                        <li>Tutor A: 28% completion (35/126 sessions) → 🚨 Immediate escalation</li>
+                        <li>Tutor B: 37% completion (9/24 sessions) → 🚨 Immediate escalation</li>
+                        <li>Tutor C: 65% completion (52/80 sessions) → ⚠️ Moderate tracking</li>
+                        <li>Tutor D: 85% completion (68/80 sessions) → ✅ Meeting expectations</li>
+                    </ul>
+
+                    <div class="alert alert-warning" style="margin-top: 1rem;">
+                        <strong>📅 Reporting Frequency:</strong> Shared weekly (by Monday EOD) for follow-up with on-site staff
+                    </div>
+                </div>
+
+                <button class="collapsible">📊 Scholar Survey "Out of Range" Rate (≥20%)</button>
+                <div class="collapsible-content">
+                    <p><strong>Definition:</strong> Scholar surveys submitted more than 10 minutes after session completion</p>
+                    <p><strong>"In Range" Standard:</strong> At least 80% of scholar surveys must be completed within 10 minutes of session end</p>
+                    <p><strong>Implication:</strong> High out-of-range percentage suggests potential tutor completion on behalf of scholars, delayed survey process, or poor end-of-session routines</p>
+                    
+                    <h4 style="margin-top: 1rem;">Why This Matters</h4>
+                    <p>Surveys completed well after the session may not reflect authentic scholar voice or fresh impressions. The 10-minute window ensures:</p>
+                    <ul>
+                        <li>Scholars complete surveys independently while memories are fresh</li>
+                        <li>Feedback is genuine and not influenced by external factors</li>
+                        <li>Tutors are building real-time data collection into session routines</li>
+                    </ul>
+
+                    <h4>Current Target</h4>
+                    <p><strong>Goal:</strong> 80% of surveys "in range" (within 10 minutes of session end)</p>
+                    <p><strong>Typical Challenge:</strong> Organization-wide, a significant portion of scholar surveys are completed outside the session timeframe, requiring ongoing coaching and reinforcement.</p>
+
+                    <h4>Example Out-of-Range Scenarios</h4>
+                    <ul>
+                        <li>Tutor with 98% out of range → Only 2% in range (Critical concern)</li>
+                        <li>Tutor with 85% out of range → Only 15% in range (Needs coaching)</li>
+                        <li>Tutor with 65% out of range → Only 35% in range (Monitor and support)</li>
+                        <li>Tutor with 15% out of range → 85% in range (Meeting target)</li>
+                    </ul>
+
+                    <p><strong>Action:</strong> Coaching on real-time survey completion with scholars - allocate last 5 minutes of session</p>
+
+                    <div class="alert alert-warning" style="margin-top: 1rem;">
+                        <strong>📅 Reporting Frequency:</strong> Tracked weekly and shared with regional teams for coaching opportunities
+                    </div>
+                </div>
+
+                <button class="collapsible">👥 Chronic Absenteeism (Scholar) - Adaptive Flagging</button>
+                <div class="collapsible-content">
+                    <p><strong>Adaptive Definition:</strong> Two weeks' worth of consecutive direct instruction missed, adjusted for program schedule</p>
+                    
+                    <h4 style="margin-top: 1rem;">How It Works</h4>
+                    <p>The chronic absenteeism flag adapts based on how many days per week a program operates:</p>
+                    <ul>
+                        <li><strong>Programs meeting 2x/week (e.g., GLAW):</strong> 4 consecutive missed sessions = chronic absenteeism flag</li>
+                        <li><strong>Programs meeting 3x/week:</strong> 6 consecutive missed sessions = chronic absenteeism flag</li>
+                        <li><strong>Programs meeting 5x/week:</strong> 10 consecutive missed sessions = chronic absenteeism flag</li>
+                    </ul>
+
+                    <h4>Rationale</h4>
+                    <p>This approach allows us to effectively flag all of our programs, regardless of how many days per week sessions are held. The focus is on <strong>two weeks of consecutive missed instruction</strong>, not a fixed number of days.</p>
+
+                    <h4>Implication</h4>
+                    <ul>
+                        <li>Risk of disengagement and learning loss</li>
+                        <li>Family may need re-connection or schedule adjustment</li>
+                        <li>Possible external barriers (transportation, health, family circumstances)</li>
+                    </ul>
+
+                    <h4>Action Protocol</h4>
+                    <ol>
+                        <li>Site coordinator reaches out to family within 24 hours of flag</li>
+                        <li>Document reason for absences and family communication</li>
+                        <li>Weekly updates shared with regional managers (by Monday EOD)</li>
+                        <li>If no contact after 2 attempts, escalate to District POC</li>
+                        <li>Continue monitoring for 2 weeks post-intervention</li>
+                    </ol>
+
+                    <p><strong>Example Scenario:</strong> A school program operates twice per week. After a scholar misses 4 consecutive sessions (2 weeks of instruction), the chronic absenteeism flag triggers. The site coordinator reaches out to the family to understand barriers and offer support. After re-engagement efforts and schedule adjustments, the scholar's attendance improves over the following weeks.</p>
+
+                    <div class="alert alert-warning" style="margin-top: 1rem;">
+                        <strong>📅 Reporting Frequency:</strong> Shared weekly (by Monday EOD) for follow-up with on-site staff. Escalation to District POC if unresolved after 2 weeks.
+                    </div>
+                </div>
+
+                <button class="collapsible">📉 Below Benchmark (Session Quality)</button>
+                <div class="collapsible-content">
+                    <p><strong>Benchmarks:</strong></p>
+                    <ul>
+                        <li>Session Quality: ≥4.5/5</li>
+                        <li>Scholar Engagement: ≥4.2/5</li>
+                        <li>Scholar Learning: ≥4.2/5</li>
+                        <li>Scholar Enjoyment: ≥4.5/5</li>
+                    </ul>
+                    <p><strong>Action:</strong> Coaching recommendation, trend monitoring</p>
+                    <p><strong>Example Scenario:</strong> A tutor's scholar enjoyment rating starts at 2.5/5, indicating rapport challenges. After targeted coaching on engagement strategies and relationship-building, ratings improve steadily to 3.8/5 over several weeks, demonstrating the impact of intervention.</p>
+                </div>
+
+                <button class="collapsible">🚩 Behavioral Comment Flag</button>
+                <div class="collapsible-content">
+                    <p><strong>Definition:</strong> Instructor submits survey with "Do you need an administrator to look into this session?" checked</p>
+                    <p><strong>Implication:</strong> Issue requiring immediate program team attention</p>
+                    <p><strong>Action:</strong> Review within 24 hours, document in behavioral tracking sheet</p>
+                    <p><strong>Example Scenarios:</strong></p>
+                    <ul>
+                        <li>Minor disruption with scholar engagement → Tutor flags for coaching support</li>
+                        <li>Technology issue (device malfunction) impacting session → Admin needs to know for equipment support</li>
+                        <li>Recurring behavioral pattern → May need classroom teacher or family involvement</li>
+                        <li>Safety concern → Immediate admin and family notification required</li>
+                    </ul>
+                </div>
+
+                <button class="collapsible">📅 Attendance Below 90% (Tutor)</button>
+                <div class="collapsible-content">
+                    <p><strong>Definition:</strong> Tutor attendance rate falls below 90% threshold</p>
+                    <p><strong>Implication:</strong> Service delivery consistency concerns, potential HR issue</p>
+                    <p><strong>Action:</strong> Site coordinator follow-up for context (illness, approved leave, etc.)</p>
+                    <p><strong>Example Scenarios:</strong></p>
+                    <ul>
+                        <li>Tutor with 75% attendance due to illness → Resolved after recovery, no further action</li>
+                        <li>Tutor starting at 60% attendance in early weeks → Improved to 92% after schedule stabilization</li>
+                        <li>Tutor with 0% attendance for extended period → Investigation reveals resignation, update HR records</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Weekly Tracking & Communication Protocol</h2>
+                <p>The Data Team maintains a formal weekly communication cadence to ensure transparent tracking and timely follow-ups across all operational concerns.</p>
+
+                <h3>Monday EOD Deliverables</h3>
+                <p>By end of day Monday, the following tracking reports are shared with regional teams:</p>
+
+                <div class="workflow-diagram">
+                    <div class="workflow-step">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <h4>Behavioral Tracking Sheet</h4>
+                            <p>Instructor behavioral comments filtered, flagged, and shared for follow-up and status updates on ticket closures</p>
+                        </div>
+                    </div>
+                    <div class="workflow-step">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <h4>Incomplete Sessions / Chronic Absenteeism Report</h4>
+                            <p>Shared for follow-up with on-site staff to ensure incomplete attendance is addressed and closed out. Includes adaptive chronic absenteeism flags.</p>
+                        </div>
+                    </div>
+                    <div class="workflow-step">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <h4>Survey Completion Rate Tracking</h4>
+                            <p>Percentage of instructor surveys completed relative to attended sessions, with tiered escalation indicators (Below 50%, 50-79%, 80%+)</p>
+                        </div>
+                    </div>
+                </div>
+
+                <h3>Regional Tracking Sheet Access</h3>
+                <p>Regional managers have access to dedicated tracking sheets for quick reference:</p>
+                <ul>
+                    <li><strong>Attendance Incomplete Tracking / Chronic Absenteeism:</strong> Real-time view of scholars flagged for chronic absenteeism and tutors with high incomplete rates</li>
+                    <li><strong>Behavior Tracking:</strong> Status tracking for all flagged behavioral comments (when applicable by region)</li>
+                    <li><strong>Survey Completion Tracking:</strong> Live dashboard of instructor survey compliance by site and tutor</li>
+                </ul>
+
+                <div class="alert alert-success">
+                    <strong>✅ Best Practice:</strong> Regional managers are encouraged to favorite these tracking sheets for quick access. Weekly tags are sent as updates are made.
+                </div>
+
+                <h3>Communication Chain</h3>
+                <p>The formal communication structure ensures transparency and accountability:</p>
+                <ol>
+                    <li><strong>Data Team (Monday EOD):</strong> Pulls, cleans, analyzes data; creates flags; updates tracking sheets; sends notification to regional teams</li>
+                    <li><strong>Regional Managers (Tuesday):</strong> Review flags, prioritize by severity, assign to site coordinators</li>
+                    <li><strong>Site Coordinators (Tuesday-Wednesday):</strong> Follow up with tutors/families, gather context, initiate interventions</li>
+                    <li><strong>Site Coordinators (Thursday-Friday):</strong> Document outcomes in ticket log, update status fields</li>
+                    <li><strong>Regional Managers (Friday):</strong> Review status updates, escalate unresolved items if needed</li>
+                    <li><strong>Data Team (Following Monday):</strong> Review closed tickets, update dashboards, continue monitoring</li>
+                </ol>
+
+                <div class="alert alert-info">
+                    <strong>📧 Email Format:</strong>
+                    <p style="margin-top: 0.5rem; font-style: italic;">"Good afternoon, Team – I wanted to send a formal note so we have a transparent chain regarding the internal tracking and follow-ups currently in place..."</p>
+                    <p style="margin-top: 0.5rem;">This consistent communication format ensures everyone understands what is being tracked, why it matters, and what actions are expected.</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Progress Monitoring Dashboard</h2>
+                <p>The Progress Monitoring Dashboard provides a comprehensive view of all flags, their status, and trends over time.</p>
+
+                <h3>Dashboard Structure</h3>
+                <div class="process-flow">
+                    <strong>Column 1:</strong> Dashboard owner (Pearl Onsite Staff, Regional team)
+                    <div class="arrow">→</div>
+                    <strong>Column 2:</strong> Location/District
+                    <div class="arrow">→</div>
+                    <strong>Column 3:</strong> Report Type (Pearl Dashboard, Raw Report)
+                    <div class="arrow">→</div>
+                    <strong>Column 4:</strong> Overall Status (High/Moderate/Low)
+                    <div class="arrow">→</div>
+                    <strong>Column 5:</strong> Immediate Health Indication
+                    <div class="arrow">→</div>
+                    <strong>Columns 6+:</strong> Weekly status tracking (Week 1 through Week 19)
+                </div>
+
+                <h3>Status Indicators</h3>
+                <ul>
+                    <li><strong>🟢 Positive:</strong> Meeting or exceeding benchmarks</li>
+                    <li><strong>🟡 Moderate:</strong> Acceptable but monitor for trends</li>
+                    <li><strong>🔴 Low:</strong> Below threshold, requires context/action</li>
+                    <li><strong>🚨 High:</strong> Critical concern, immediate attention needed</li>
+                </ul>
+
+                <div class="alert alert-info">
+                    <strong>📊 Typical Monitoring Insights:</strong>
+                    <ul>
+                        <li>Scholar survey timing often shows significant out-of-range submissions, requiring routine coaching</li>
+                        <li>Subset of tutors consistently need support with survey completion practices</li>
+                        <li>Instructors with incomplete survey patterns identified for targeted follow-up</li>
+                        <li>Top service interruptions typically include: School testing, holidays, tutor absences</li>
+                        <li>Primary scholar absence reasons: Student absent, teacher requested scholar stay in class</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Section -->
+        <div id="action" class="content-section">
+            <div class="card">
+                <h2>From Data to Action</h2>
+                <p>Flags and insights must translate into concrete interventions. This section details who acts, when, and how based on data findings.</p>
+
+                <h3>Action Framework</h3>
+                <div class="workflow-diagram">
+                    <div class="workflow-step">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <h4>Flag Identification</h4>
+                            <p>Data team identifies concern through dashboard monitoring</p>
+                        </div>
+                    </div>
+                    <div class="workflow-step">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <h4>Ticket Creation</h4>
+                            <p>Issue logged in SY 25-26 Program Ticket Log with details</p>
+                        </div>
+                    </div>
+                    <div class="workflow-step">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <h4>Assignment & Notification</h4>
+                            <p>Regional manager or site coordinator notified based on flag type</p>
+                        </div>
+                    </div>
+                    <div class="workflow-step">
+                        <div class="step-number">4</div>
+                        <div class="step-content">
+                            <h4>Investigation & Context</h4>
+                            <p>Program team gathers additional information and determines root cause</p>
+                        </div>
+                    </div>
+                    <div class="workflow-step">
+                        <div class="step-number">5</div>
+                        <div class="step-content">
+                            <h4>Intervention</h4>
+                            <p>Action taken (coaching, family outreach, schedule adjustment, etc.)</p>
+                        </div>
+                    </div>
+                    <div class="workflow-step">
+                        <div class="step-number">6</div>
+                        <div class="step-content">
+                            <h4>Documentation & Follow-Up</h4>
+                            <p>Outcome recorded in ticket log, monitoring continues</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Action Types by Flag</h2>
+
+                <button class="collapsible">Attendance Concerns</button>
+                <div class="collapsible-content">
+                    <h3>Tutor Attendance Below 90%</h3>
+                    <p><strong>Responsible Party:</strong> Site Coordinator + Regional Manager</p>
+                    <p><strong>Actions:</strong></p>
+                    <ul>
+                        <li>Check for approved leave, illness, or personal circumstances</li>
+                        <li>Review substitute coverage gaps</li>
+                        <li>If pattern continues without context: escalate to HR for performance discussion</li>
+                        <li>Document in ticket log with resolution date</li>
+                    </ul>
+
+                    <h3>Scholar Chronic Absenteeism</h3>
+                    <p><strong>Responsible Party:</strong> Site Coordinator</p>
+                    <p><strong>Actions:</strong></p>
+                    <ul>
+                        <li>Contact family to understand barriers to attendance</li>
+                        <li>Offer schedule adjustments if needed</li>
+                        <li>Check with classroom teacher for additional context</li>
+                        <li>Document family communication and outcome</li>
+                        <li>Continue monitoring for 2 weeks post-intervention</li>
+                    </ul>
+                </div>
+
+                <button class="collapsible">Survey Compliance Issues</button>
+                <div class="collapsible-content">
+                    <h3>Low Survey Completion Rate (<50%)</h3>
+                    <p><strong>Responsible Party:</strong> Site Coordinator + PD Team</p>
+                    <p><strong>Actions:</strong></p>
+                    <ul>
+                        <li>Email reminder sent to tutor with expectations</li>
+                        <li>1-on-1 check-in to identify barriers (technical issues, time constraints)</li>
+                        <li>Provide training on efficient survey completion workflow</li>
+                        <li>Set weekly completion goal and monitor progress</li>
+                        <li>If no improvement after 2 weeks: escalate to Regional Manager</li>
+                    </ul>
+
+                    <h3>High Out-of-Range Survey Submissions</h3>
+                    <p><strong>Responsible Party:</strong> Site Coordinator</p>
+                    <p><strong>Actions:</strong></p>
+                    <ul>
+                        <li>Coach tutor on real-time survey completion practices</li>
+                        <li>Reinforce importance of scholar voice authenticity</li>
+                        <li>Suggest allocating last 5 minutes of session for scholar surveys</li>
+                        <li>Monitor for improvement over next 2 weeks</li>
+                    </ul>
+                </div>
+
+                <button class="collapsible">Quality Indicators Below Benchmark</button>
+                <div class="collapsible-content">
+                    <h3>Session Quality / Scholar Enjoyment Below 4.5</h3>
+                    <p><strong>Responsible Party:</strong> Site Coordinator + PD Team</p>
+                    <p><strong>Actions:</strong></p>
+                    <ul>
+                        <li>Review session comments for patterns (pacing, engagement strategies, content difficulty)</li>
+                        <li>Conduct observation of upcoming session</li>
+                        <li>Provide targeted coaching on identified areas</li>
+                        <li>Connect tutor with high-performing peer for best practice sharing</li>
+                        <li>Set improvement goals and check-in bi-weekly</li>
+                        <li>Celebrate progress as metrics improve</li>
+                    </ul>
+
+                    <h3>Scholar Engagement / Learning Below 4.2</h3>
+                    <p><strong>Responsible Party:</strong> Site Coordinator</p>
+                    <p><strong>Actions:</strong></p>
+                    <ul>
+                        <li>Review session plans for differentiation and engagement strategies</li>
+                        <li>Check scholar groupings for appropriate skill level matching</li>
+                        <li>Discuss with tutor: Are scholars being challenged appropriately?</li>
+                        <li>Provide engagement technique resources</li>
+                        <li>Monitor weekly for trends</li>
+                    </ul>
+                </div>
+
+                <button class="collapsible">Behavioral Flags</button>
+                <div class="collapsible-content">
+                    <h3>Instructor Comment Flag (Admin Attention Requested)</h3>
+                    <p><strong>Responsible Party:</strong> Site Coordinator (immediate), Regional Manager (if escalated)</p>
+                    <p><strong>Timeline:</strong> Review within 24 hours</p>
+                    <p><strong>Actions:</strong></p>
+                    <ul>
+                        <li>Read full comment and context in ticket log</li>
+                        <li>Determine severity:
+                            <ul>
+                                <li><strong>Low:</strong> Minor disruption, coach tutor on classroom management</li>
+                                <li><strong>Medium:</strong> Recurring issue, involve classroom teacher</li>
+                                <li><strong>High:</strong> Safety concern, involve admin and family immediately</li>
+                            </ul>
+                        </li>
+                        <li>Document intervention in behavioral tracking sheet</li>
+                        <li>Follow up with tutor to confirm issue resolution</li>
+                        <li>Monitor scholar's subsequent sessions for pattern changes</li>
+                    </ul>
+
+                    <div class="alert alert-warning">
+                        <strong>⚠️ Current Backlog:</strong> As of 11/17/2025, 18 behavioral comments require status update. Prioritize resolution to maintain response standards.
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Ticket Log System</h2>
+                <p>The <strong>SY 25-26 Program Ticket Log</strong> is the central tracking mechanism for all flagged issues.</p>
+
+                <h3>Ticket Log Structure</h3>
+                <ul>
+                    <li><strong>Timestamp:</strong> When issue was identified</li>
+                    <li><strong>Submitted By:</strong> Data team member flagging issue</li>
+                    <li><strong>Associated Region:</strong> North-East or South-West</li>
+                    <li><strong>Site/Program:</strong> Specific location</li>
+                    <li><strong>Flagged Indicator:</strong> Type of concern (attendance, survey, quality, behavior)</li>
+                    <li><strong>Flagged For:</strong> Tutor name, Scholar name, or District</li>
+                    <li><strong>Issue Description:</strong> Detailed explanation of the concern</li>
+                    <li><strong>Immediate Context:</strong> Any known background information</li>
+                    <li><strong>Programmatic Action Required:</strong> Recommended next steps</li>
+                    <li><strong>Action Status:</strong> Weekly tracking columns (Ongoing, Escalation Required, Resolved)</li>
+                    <li><strong>Actual Resolve Date:</strong> Date issue was closed</li>
+                    <li><strong>Notes:</strong> Running log of interventions and outcomes</li>
+                </ul>
+
+                <h3>Status Definitions</h3>
+                <ul>
+                    <li><strong>Ongoing:</strong> Issue acknowledged, monitoring in progress, no immediate escalation needed</li>
+                    <li><strong>Escalation Required:</strong> Threshold crossed, program team action needed</li>
+                    <li><strong>Resolved:</strong> Issue addressed, outcome documented, no further monitoring needed</li>
+                    <li><strong>N/A:</strong> Not applicable or pre-dates tracking period</li>
+                </ul>
+
+                <div class="alert alert-success">
+                    <strong>✅ Best Practice:</strong> Update ticket statuses weekly during dashboard refresh cycle to maintain accurate tracking and accountability.
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Policy Application Examples</h2>
+
+                <button class="collapsible">Example 1: Improving Tutor-Scholar Rapport</button>
+                <div class="collapsible-content">
+                    <p><strong>Initial Concern:</strong> Scholar enjoyment ratings consistently below benchmark (2.0-2.5/5), learning ratings at 3.0/5</p>
+                    <p><strong>Investigation:</strong> One scholar providing consistently low ratings; site leader observation revealed comprehension challenges</p>
+                    <p><strong>Root Cause:</strong> Scholar struggled with academic vocabulary and may have misunderstood survey questions</p>
+                    <p><strong>Intervention:</strong></p>
+                    <ul>
+                        <li>Tutor trained to review survey questions with scholars before completion</li>
+                        <li>Site leader offered to support scholar during future surveys</li>
+                        <li>Additional one-on-one time provided for relationship building</li>
+                    </ul>
+                    <p><strong>Outcome:</strong> Ratings improved progressively from 2.0 → 2.7 → 3.0 → 3.5 → 3.7 over time</p>
+                    <p><strong>Lesson Learned:</strong> Low ratings don't always indicate poor performance; sometimes indicate need for scaffolding or clarification</p>
+                </div>
+
+                <button class="collapsible">Example 2: Addressing Scholar Attendance Patterns</button>
+                <div class="collapsible-content">
+                    <p><strong>Initial Concern:</strong> School-wide scholar attendance at 36% during early program weeks</p>
+                    <p><strong>Investigation:</strong> Contextual factors identified - diagnostic testing period, transition to formal tutoring</p>
+                    <p><strong>Intervention:</strong></p>
+                    <ul>
+                        <li>School point of contact engaged staff to contact all tutored families</li>
+                        <li>Parents confirmed continued participation interest</li>
+                        <li>Individual scholars with chronic absences flagged for targeted outreach</li>
+                        <li>Testing period concluded, regular schedule established</li>
+                    </ul>
+                    <p><strong>Outcome:</strong> Attendance improved from 36% to 46% as routines stabilized</p>
+                    <p><strong>Lesson Learned:</strong> Always seek programmatic context before escalating; early-year trends may reflect adjustment periods</p>
+                </div>
+
+                <button class="collapsible">Example 3: Behavioral Comment Management</button>
+                <div class="collapsible-content">
+                    <p><strong>Initial Concern:</strong> 25+ flagged behavior comments across multiple tutors in one district</p>
+                    <p><strong>Pattern Analysis:</strong></p>
+                    <ul>
+                        <li>Several comments noted technology disruptions (device failures)</li>
+                        <li>Some referenced scholar disengagement during transition times</li>
+                        <li>Few indicated high energy but productive sessions</li>
+                    </ul>
+                    <p><strong>Systemic Intervention:</strong></p>
+                    <ul>
+                        <li>Behavioral Tracking Sheet created for status monitoring</li>
+                        <li>School climate issue identified: Equipment storage too far from tutoring spaces</li>
+                        <li>Engagement strategies resource shared with all tutors</li>
+                        <li>Weekly status update protocol implemented</li>
+                    </ul>
+                    <p><strong>Outcome:</strong> Majority of concerns resolved through equipment logistics and coaching; clear response system established</p>
+                    <p><strong>Lesson Learned:</strong> Multiple individual flags can reveal systemic issues requiring operational solutions, not just individual coaching</p>
+                </div>
+
+                <button class="collapsible">Example 4: Survey Completion Coaching</button>
+                <div class="collapsible-content">
+                    <p><strong>Initial Concern:</strong> Tutor consistently had no scholar surveys recorded despite attended sessions</p>
+                    <p><strong>Investigation:</strong> Recent scholar-tutor interaction escalated to admin; surveys stopped being completed</p>
+                    <p><strong>Root Cause:</strong> Tutor acknowledged time management challenge: "time escapes us... slow movements"</p>
+                    <p><strong>Intervention:</strong></p>
+                    <ul>
+                        <li>Admin meeting held to address scholar interaction and rapport-building</li>
+                        <li>Tutor committed to having scholars complete surveys before dismissal</li>
+                        <li>Site coordinator provided tips on time management and session pacing</li>
+                    </ul>
+                    <p><strong>Outcome:</strong> Scholar surveys resumed for all subsequent sessions; issue resolved</p>
+                    <p><strong>Lesson Learned:</strong> Survey completion issues can indicate deeper classroom management or relationship challenges requiring holistic support</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Governance Section -->
+        <div id="governance" class="content-section">
+            <div class="card">
+                <h2>Data Governance Framework</h2>
+                <p>This section outlines the policies, procedures, and standards that ensure data integrity, security, and appropriate use across NJTC operations.</p>
+
+                <div class="alert alert-warning">
+                    <strong>🛡️ Core Principle:</strong> Data is the foundation of decision-making. Our governance structure protects data integrity, accuracy, privacy, and intellectual property.
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Authority & Ownership</h2>
+
+                <h3>Centralized Data Authority</h3>
+                <p><strong>Director of Program Evaluation & Impact</strong> is the sole authority for:</p>
+                <ul>
+                    <li>All data systems, dashboards, and analytics workflows</li>
+                    <li>Data pulling, manipulation, and transformation</li>
+                    <li>Dashboard creation and updates</li>
+                    <li>Benchmark setting and modification</li>
+                    <li>Reporting structures and cadences</li>
+                </ul>
+
+                <h3>What This Means</h3>
+                <ul>
+                    <li>❌ <strong>No other staff member</strong> handles, manipulates, or updates raw or transformed data</li>
+                    <li>❌ <strong>No copying</strong> of proprietary dashboards, automation, or workflows</li>
+                    <li>❌ <strong>No alterations</strong> to dashboard logic or calculations by non-authorized personnel</li>
+                    <li>✅ <strong>All data requests</strong> route through the Director</li>
+                    <li>✅ <strong>Context and interpretation</strong> provided by regional teams, but not raw data access</li>
+                </ul>
+
+                <div class="alert alert-info">
+                    <strong>Rationale:</strong> Single point of authority prevents inconsistencies, errors, and unauthorized modifications. Ensures all stakeholders work from the same source of truth.
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Scope & Frequency</h2>
+
+                <h3>Monitoring Categories</h3>
+                <ul>
+                    <li><strong>Scholar Attendance:</strong> Overall rates and individual patterns</li>
+                    <li><strong>Tutor Delivery:</strong> Attendance, session execution, survey completion</li>
+                    <li><strong>Scholar Experience:</strong> Surveys on learning, enjoyment, engagement</li>
+                    <li><strong>Instructor Reflection:</strong> Quality culture inputs, session notes</li>
+                </ul>
+
+                <h3>Reporting Cadence</h3>
+                <table style="width: 100%; border-collapse: collapse; margin: 1rem 0;">
+                    <tr style="background: var(--njtc-primary); color: white;">
+                        <th style="padding: 0.75rem; text-align: left; border: 1px solid #ddd;">Frequency</th>
+                        <th style="padding: 0.75rem; text-align: left; border: 1px solid #ddd;">Activity</th>
+                    </tr>
+                    <tr style="background: var(--njtc-light);">
+                        <td style="padding: 0.75rem; border: 1px solid #ddd;"><strong>Weekly</strong></td>
+                        <td style="padding: 0.75rem; border: 1px solid #ddd;">Pull attendance, survey, and session data; internal QA review; dashboard updates</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 0.75rem; border: 1px solid #ddd;"><strong>Monthly</strong></td>
+                        <td style="padding: 0.75rem; border: 1px solid #ddd;">Trend review and leadership briefing</td>
+                    </tr>
+                    <tr style="background: var(--njtc-light);">
+                        <td style="padding: 0.75rem; border: 1px solid #ddd;"><strong>Quarterly</strong></td>
+                        <td style="padding: 0.75rem; border: 1px solid #ddd;">Formal progress reporting aligned to diagnostic cycles</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 0.75rem; border: 1px solid #ddd;"><strong>Ad-Hoc</strong></td>
+                        <td style="padding: 0.75rem; border: 1px solid #ddd;">If critical operational variance or partner request</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="card">
+                <h2>Privacy & Access Requirements</h2>
+
+                <h3>Data Minimization</h3>
+                <ul>
+                    <li>Scholar and tutor IDs only in reporting and analysis</li>
+                    <li>Names used only for operational follow-up when necessary</li>
+                    <li>Access restricted based on role; minimum necessary principle</li>
+                    <li>Reports shared in secure formats (PDF lock, controlled permissions)</li>
+                </ul>
+
+                <h3>Access Tiers</h3>
+                <ul>
+                    <li><strong>Level 1 - Director PEI:</strong> Full access to all raw and transformed data</li>
+                    <li><strong>Level 2 - Regional Managers:</strong> Dashboard access for their region, cannot export raw data</li>
+                    <li><strong>Level 3 - Site Coordinators:</strong> Dashboard access for their site, ticketing system for context</li>
+                    <li><strong>Level 4 - Tutors:</strong> Access to their own past sessions, surveys, and attendance only</li>
+                    <li><strong>Level 5 - Partners:</strong> Aggregated, anonymized dashboards for their school/district</li>
+                </ul>
+
+                <div class="alert alert-warning">
+                    <strong>🔒 Reminder:</strong> No raw files or dashboards are to be copied, re-created, or altered by other parties. Proprietary logic and workflows are confidential.
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Escalation Protocol</h2>
+                <p>When data flags operational concerns, follow this escalation pathway:</p>
+
+                <div class="workflow-diagram">
+                    <div class="workflow-step">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <h4>Verification</h4>
+                            <p>Data team conducts internal cross-checks to confirm flag validity</p>
+                        </div>
+                    </div>
+                    <div class="workflow-step">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <h4>Notification</h4>
+                            <p>Inform program leadership (Regional Manager, Director of Programs)</p>
+                        </div>
+                    </div>
+                    <div class="workflow-step">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <h4>Communication</h4>
+                            <p>Site leader(s) contacted if intervention required</p>
+                        </div>
+                    </div>
+                    <div class="workflow-step">
+                        <div class="step-number">4</div>
+                        <div class="step-content">
+                            <h4>Documentation</h4>
+                            <p>Log resolution pathway in ticket log</p>
+                        </div>
+                    </div>
+                    <div class="workflow-step">
+                        <div class="step-number">5</div>
+                        <div class="step-content">
+                            <h4>Follow-Up Monitoring</h4>
+                            <p>Continue tracking for recurrence, update dashboard benchmarks if needed</p>
+                        </div>
+                    </div>
+                </div>
+
+                <p><strong>Important:</strong> This SOP supports improvement, not punitive action. Data insights guide coaching, support, and systemic improvements.</p>
+            </div>
+
+            <div class="card">
+                <h2>Continuity Planning</h2>
+
+                <h3>In the Director's Absence</h3>
+                <ul>
+                    <li>Only a static operations report may be issued (pre-approved template)</li>
+                    <li>No live environment updates or backend changes are permitted</li>
+                    <li>Access permissions remain unchanged</li>
+                    <li>Urgent issues escalate to Executive Leadership</li>
+                </ul>
+
+                <h3>Compliance Expectations</h3>
+                <p>All team members must adhere to:</p>
+                <ul>
+                    <li>Confidentiality expectations (no sharing of identifiable data)</li>
+                    <li>Standard reporting cadence (weekly/monthly/quarterly)</li>
+                    <li>Access boundaries (only view data relevant to your role)</li>
+                    <li>Escalation pathways (follow proper channels for data requests)</li>
+                </ul>
+
+                <div class="alert alert-warning">
+                    <strong>⚠️ Non-Compliance:</strong> Violations trigger review by Executive Leadership and may result in loss of data access privileges.
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Intellectual Property Statement</h2>
+                <p>All reporting structures, data logic, formulas, governance rules, automation scripts, and dashboard frameworks developed by the Director of Program Evaluation & Impact are <strong>proprietary to NJTC</strong> and not to be replicated or distributed without explicit written authorization.</p>
+
+                <h3>Protected Elements Include:</h3>
+                <ul>
+                    <li>Dashboard design and layout</li>
+                    <li>Benchmark calculations and thresholds</li>
+                    <li>Data transformation scripts</li>
+                    <li>Automated flagging logic</li>
+                    <li>Visualization templates</li>
+                    <li>Survey clumping methodologies</li>
+                    <li>Report generation workflows</li>
+                </ul>
+
+                <div class="alert alert-info">
+                    <strong>📜 Acknowledgment:</strong> By receiving this SOP, team members acknowledge operational awareness—not execution responsibility—and respect for protected reporting systems.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p><strong>New Jersey Tutoring Corps | Pennsylvania Tutoring Corps</strong></p>
+        <p>Data Governance Guide | Program Evaluation & Impact</p>
+        <p style="opacity: 0.8; margin-top: 1rem;">For Internal Use Only | Living Document</p>
+    </div>
+
+    <script>
+        function showTab(tabName) {
+            // Hide all content sections
+            const sections = document.querySelectorAll('.content-section');
+            sections.forEach(section => {
+                section.classList.remove('active');
+            });
+
+            // Remove active class from all buttons
+            const buttons = document.querySelectorAll('.tab-button');
+            buttons.forEach(button => {
+                button.classList.remove('active');
+            });
+
+            // Show selected section
+            document.getElementById(tabName).classList.add('active');
+
+            // Add active class to clicked button
+            event.target.classList.add('active');
+
+            // Scroll to top of content
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Collapsible functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const collapsibles = document.querySelectorAll('.collapsible');
+            
+            collapsibles.forEach(button => {
+                button.addEventListener('click', function() {
+                    this.classList.toggle('active');
+                    const content = this.nextElementSibling;
+                    content.classList.toggle('active');
+                });
+            });
+        });
+    </script>
+</body>
+</html>
